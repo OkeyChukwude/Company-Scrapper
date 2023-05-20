@@ -19,19 +19,6 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
-# from dotenv import load_dotenv
-
-# basedir = os.path.abspath(os.path.dirname(__file__))
-# load_dotenv(os.path.join(basedir, '.env'))  # take environment variables from .env.
-
-# os.environ['OPENAI_API_KEY'] = os.environ.get('OPENAI_API_KEY')
-# os.environ["HUGGINGFACEHUB_API_TOKEN"] = os.environ.get("HUGGINGFACEHUB_API_TOKEN")
-# os.environ["SERPAPI_API_KEY"] = os.environ.get("SERPAPI_API_KEY")
-
-os.environ['OPENAI_API_KEY'] = "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"
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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 "
-os.environ["SERPAPI_API_KEY"] = "569ae6e2daa82c1e8f874c249904baaffa496d80f0423122d56c673c7bae95f8"
-
 gpt3 = OpenAI(model_name='text-davinci-003')
 
 tool_names = ["serpapi"]

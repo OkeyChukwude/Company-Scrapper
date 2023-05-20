@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, abort, jsonify
 from .scrapper import scrape
-
+from .config import Config
 
 app = Flask(__name__)
+app.config.from_object(Config)
 
 @app.errorhandler(400)
 def bad_request(error):
