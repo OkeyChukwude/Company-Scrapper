@@ -17,19 +17,47 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import Chroma 
+from langchain.agents import AgentType
+from langchain import SerpAPIWrapper
+from langchain.docstore.document import Document
+from langchain.chains.question_answering import load_qa_chain
 
-gpt3 = OpenAI(model_name='text-davinci-003')
+# gpt3 = OpenAI(model_name='text-davinci-003')
+ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
 
+#The search tool used to search the internet
 tool_names = ["serpapi"]
 tools = load_tools(tool_names)
 
-agent = initialize_agent(tools, llm =gpt3 , agent="zero-shot-react-description", verbose=True)
+#Initializing the agent that uses the search tool and the openAI LLM to answer questions
+agent = initialize_agent(tools, llm =ollm , agent="zero-shot-react-description", verbose=True)
+
 
 def scrape(company_name, country, url=None):
+    ''' 
+    Function that takes in Company and country, 
+    and searches the internet to get's the description and then gets 
+    the products and services from the description as a commaseperated list. 
+
+    Keyword arguments:
+    company_name: str 
+    country: str 
+
+    Returns 
+    (Description : str, products :str) : tuple
+       
+    '''
     try:
-        answer = agent.run(f"What products/services does the company {company_name} offer?")
-        return answer
+    
+        description = agent.run(f"Which industry does the company called {company_name}  based in {country} operate in and list all the products and services they offer ?")
+        docs1 = [Document(page_content=description)]
+        query1 = "only give me a comma seperated list of the products and services offered that are related to the industry, with their complete names"
+        chain = load_qa_chain(OpenAI(temperature=0), chain_type="stuff")
+        products = chain.run(input_documents=docs1, question=query1)
+
+        return (description,products)
+        # return products
     except:
         return 'There was an error. Try again!'
 
