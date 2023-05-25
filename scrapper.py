@@ -1,27 +1,9 @@
 import os
 import langchain
-from langchain.llms import OpenAI, Cohere, HuggingFaceHub
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import (
-    AIMessage,
-    HumanMessage,
-    SystemMessage
-)
+import json 
+from langchain.llms import OpenAI 
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
-
-from langchain.chains import RetrievalQA
-from langchain.llms import OpenAI
-from langchain.document_loaders import TextLoader
-from langchain.document_loaders import PyPDFLoader
-from langchain.indexes import VectorstoreIndexCreator
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma 
-from langchain.agents import AgentType
-from langchain import SerpAPIWrapper
-from langchain.docstore.document import Document
-from langchain.chains.question_answering import load_qa_chain
 
 gpt3 = OpenAI(model_name='text-davinci-003', temperature =0)
 # ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
@@ -48,7 +30,7 @@ def scrape(company_name, country, url=None):
     (Description : str, products :str) : tuple
        
     '''
-    details = ''
+    # details = ''
     try:
         query = f'''
             I need you to answer some questions about the company in double  quotes ''{company_name}'' that is based in this country in angle brackets <{country}> :
@@ -64,7 +46,8 @@ def scrape(company_name, country, url=None):
             4 - What are the key words associated with this company and its product ?, output not less than 3 words in a comma seperated list.
 
             Return a JSON object with the following keys: Description,Keywords, Products, Services, where the products and services are in a list and not a string object. 
-
+            
+            Make sure to use double quotes for the keys of the JSON object
             Make sure the description is not less than two sentences. 
             Make sure the services is a valid type of service that can be rendered by a company. 
         '''
@@ -73,16 +56,25 @@ def scrape(company_name, country, url=None):
         details = agent.run(query)
 
         
+        new = json.loads(details)
+
+        new_dict ={'Products': new["Products"], 'Services': new["Services"]}
+        print(new["Products"])
+        
+
+        
         query2 = f'''
-        I need you to answer some questions about the JSON object in double  quotes ''{details}'' : 
-        1 - What are the SIC codes from the SEC for the Values in the Key in angle brackets, <Products>, output in a comma seperated list 
-        2 - What are the SIC codes from the SEC for the Values in the Key in triple back ticks, ```Services```, output in a comma seperated list 
-        3 - What are the NAICS codes for the Values in the Key in angle brackets, <Products>, output in a comma seperated list 
-        4 - What are the NAICS codes for the Values in the Key in triple back ticks, ```Services```, output in a comma seperated list
+        I need you to answer some questions about the values in the Python Dictionary Object in double  quotes ''{new_dict}'' : 
+        1 - What are the SIC codes from the SEC for each of the Values in the Key in angle brackets, <Products>, output in a comma seperated list 
+        2 - What are the SIC codes from the SEC for each of the Values in the Key in triple back ticks, ```Services```, output in a comma seperated list 
+        3 - What are the NAICS codes for the each of Values in the Key in angle brackets, <Products>, output in a comma seperated list 
+        4 - What are the NAICS codes for the each of Values in the Key in triple back ticks, ```Services```, output in a comma seperated list
 
         Make sure to take your time to go through each value in the keys specified and find the answer for each value.
 
-        After answering those questions Return a JSON object with the following keys: SIC Products, SIC Services, NAICS Products, NAICS Services, where all the values are in a list and not a string object.
+        Return a JSON object with the following keys: SIC Products, SIC Services, NAICS Products, NAICS Services, where all the values are in a list and not a string object.
+        Make sure to use double quotes for the keys of the JSON object
+        Make sure to find the codes for each value seperately.
         '''
 
         s_n_codes = agent.run(query2)
@@ -93,7 +85,8 @@ def scrape(company_name, country, url=None):
 
         return (details,s_n_codes)
         # return products
-    except:
+    except Exception as e:
+        print(e)
         return 'There was an error. Try again!'
 
 
