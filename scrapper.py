@@ -23,15 +23,15 @@ from langchain import SerpAPIWrapper
 from langchain.docstore.document import Document
 from langchain.chains.question_answering import load_qa_chain
 
-# gpt3 = OpenAI(model_name='text-davinci-003')
-ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
+gpt3 = OpenAI(model_name='text-davinci-003', temperature =0)
+# ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
 
 #The search tool used to search the internet
 tool_names = ["serpapi"]
 tools = load_tools(tool_names)
 
 #Initializing the agent that uses the search tool and the openAI LLM to answer questions
-agent = initialize_agent(tools, llm =ollm , agent="zero-shot-react-description", verbose=True)
+agent = initialize_agent(tools, llm =gpt3 , agent="zero-shot-react-description", verbose=True)
 
 
 def scrape(company_name, country, url=None):
@@ -48,15 +48,50 @@ def scrape(company_name, country, url=None):
     (Description : str, products :str) : tuple
        
     '''
+    details = ''
     try:
-    
-        description = agent.run(f"Which industry does the company called {company_name}  based in {country} operate in and list all the products and services they offer ?")
-        docs1 = [Document(page_content=description)]
-        query1 = "only give me a comma seperated list of the products and services offered that are related to the industry, with their complete names"
-        chain = load_qa_chain(OpenAI(temperature=0), chain_type="stuff")
-        products = chain.run(input_documents=docs1, question=query1)
+        query = f'''
+            I need you to answer some questions about the company in double  quotes ''{company_name}'' that is based in this country in angle brackets <{country}> :
+            Before giving the answer to the questions check for the following:
+            1 - Find out information about the Company and make a clear distinction between their products and services 
+            2 - Check if they have products, if they don't have, just put no products 
+            3 - Check if they have Services that can be listed in a one word comma seperated list, if they don't have, just put no services 
 
-        return (description,products)
+            Here are the questions
+            1 - Provide no less than a two sentence description of the company, that focuses on the industry it operates in, its country, its products and services.
+            2 - What are all the Products the company offers ?, output this in a one to two word comma seperated list.
+            3 - What are all the Services the company offers ?, output this in a one to two word comma seperated list.
+            4 - What are the key words associated with this company and its product ?, output not less than 3 words in a comma seperated list.
+
+            Return a JSON object with the following keys: Description,Keywords, Products, Services, where the products and services are in a list and not a string object. 
+
+            Make sure the description is not less than two sentences. 
+            Make sure the services is a valid type of service that can be rendered by a company. 
+        '''
+        
+    
+        details = agent.run(query)
+
+        
+        query2 = f'''
+        I need you to answer some questions about the JSON object in double  quotes ''{details}'' : 
+        1 - What are the SIC codes from the SEC for the Values in the Key in angle brackets, <Products>, output in a comma seperated list 
+        2 - What are the SIC codes from the SEC for the Values in the Key in triple back ticks, ```Services```, output in a comma seperated list 
+        3 - What are the NAICS codes for the Values in the Key in angle brackets, <Products>, output in a comma seperated list 
+        4 - What are the NAICS codes for the Values in the Key in triple back ticks, ```Services```, output in a comma seperated list
+
+        Make sure to take your time to go through each value in the keys specified and find the answer for each value.
+
+        After answering those questions Return a JSON object with the following keys: SIC Products, SIC Services, NAICS Products, NAICS Services, where all the values are in a list and not a string object.
+        '''
+
+        s_n_codes = agent.run(query2)
+        # docs1 = [Document(page_content=description)]
+        # query1 = "only give me a comma seperated list of the products and services offered that are related to the industry, with their complete names"
+        # chain = load_qa_chain(OpenAI(temperature=0), chain_type="stuff")
+        # products = chain.run(input_documents=docs1, question=query1)
+
+        return (details,s_n_codes)
         # return products
     except:
         return 'There was an error. Try again!'
