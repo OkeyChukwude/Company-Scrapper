@@ -5,8 +5,8 @@ from langchain.llms import OpenAI
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 
-gpt3 = OpenAI(model_name='text-davinci-003', temperature =0)
-# ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity/ randomness
+gpt3 = OpenAI(model_name='text-davinci-003', temperature =0) #OpenAI LLM with a temperature of 0 increasing its creativity/ randomness
+# ollm = OpenAI(temperature=0.7) 
 
 #The search tool used to search the internet
 tool_names = ["serpapi"]
@@ -30,7 +30,6 @@ def scrape(company_name, country, url=None):
     (Description : str, products :str) : tuple
        
     '''
-    # details = ''
     try:
         query = f'''
             I need you to answer some questions about the company in double  quotes ''{company_name}'' that is based in this country in angle brackets <{country}> :
@@ -90,16 +89,8 @@ def scrape(company_name, country, url=None):
         serv_s_n_codes = agent.run(query3)
 
 
-
-
-
-        # docs1 = [Document(page_content=description)]
-        # query1 = "only give me a comma seperated list of the products and services offered that are related to the industry, with their complete names"
-        # chain = load_qa_chain(OpenAI(temperature=0), chain_type="stuff")
-        # products = chain.run(input_documents=docs1, question=query1)
-
         return (details,prod_s_n_codes,serv_s_n_codes)
-        # return products
+        
     except Exception as e:
         print(e)
         return 'There was an error. Try again!'
