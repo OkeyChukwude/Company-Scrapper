@@ -6,7 +6,7 @@ from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 
 gpt3 = OpenAI(model_name='text-davinci-003', temperature =0)
-# ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
+# ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity/ randomness
 
 #The search tool used to search the internet
 tool_names = ["serpapi"]
@@ -64,26 +64,41 @@ def scrape(company_name, country, url=None):
 
         
         query2 = f'''
-        I need you to answer some questions about the values in the Python Dictionary Object in double  quotes ''{new_dict}'' : 
-        1 - What are the SIC codes from the SEC for each of the Values in the Key in angle brackets, <Products>, output in a comma seperated list 
-        2 - What are the SIC codes from the SEC for each of the Values in the Key in triple back ticks, ```Services```, output in a comma seperated list 
-        3 - What are the NAICS codes for the each of Values in the Key in angle brackets, <Products>, output in a comma seperated list 
-        4 - What are the NAICS codes for the each of Values in the Key in triple back ticks, ```Services```, output in a comma seperated list
+        I need you to answer some questions about the values in the list in the double quotes ''{new["Products"]}'' : 
 
-        Make sure to take your time to go through each value in the keys specified and find the answer for each value.
+        1 - What are the SIC codes from SEC for all the values in the list 
+        2 - What are the NAICS codes for all the values in the list
 
-        Return a JSON object with the following keys: SIC Products, SIC Services, NAICS Products, NAICS Services, where all the values are in a list and not a string object.
+        Return a JSON object with the following keys: SIC Products, NAICS Products, where all the values are in a list and not a string object.
         Make sure to use double quotes for the keys of the JSON object
         Make sure to find the codes for each value seperately.
         '''
 
-        s_n_codes = agent.run(query2)
+        prod_s_n_codes = agent.run(query2)
+
+        query3 = f'''
+        I need you to answer some questions about the values in the list in the double quotes ''{new["Services"]}'' : 
+
+        1 - What are the SIC codes from SEC for all the values in the list 
+        2 - What are the NAICS codes for all the values in the list
+
+        Return a JSON object with the following keys: SIC Service, NAICS Services, where all the values are in a list and not a string object.
+        Make sure to use double quotes for the keys of the JSON object
+        Make sure to find the codes for each value seperately.
+        '''
+
+        serv_s_n_codes = agent.run(query3)
+
+
+
+
+
         # docs1 = [Document(page_content=description)]
         # query1 = "only give me a comma seperated list of the products and services offered that are related to the industry, with their complete names"
         # chain = load_qa_chain(OpenAI(temperature=0), chain_type="stuff")
         # products = chain.run(input_documents=docs1, question=query1)
 
-        return (details,s_n_codes)
+        return (details,prod_s_n_codes,serv_s_n_codes)
         # return products
     except Exception as e:
         print(e)
