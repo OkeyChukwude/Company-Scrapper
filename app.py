@@ -28,13 +28,12 @@ def search():
     if scrape_response == 'There was an error. Try again!':
         return jsonify({'message': 'There was an error. Try again!', 'status': 'Error'}), 500
     
-    print(scrape_response[0])
     description = scrape_response[0]['Description']
     keywords = scrape_response[0]['Keywords']
     products = scrape_response[0]['Products'] if (scrape_response[0]['Products'] == 'No products') else list(map(lambda item: item.lstrip(), scrape_response[0]['Products'] if (type(scrape_response[0]['Products']) is list) else scrape_response[0]['Products'].split(', ')))
     services = scrape_response[0]['Services'] if (scrape_response[0]['Services'] == 'No services') else list(map(lambda item: item.lstrip(), scrape_response[0]['Services'] if (type(scrape_response[0]['Services']) is list) else scrape_response[0]['Services'].split(', ')))
 
     sic_specification = [scrape_response[1], scrape_response[4]]
-    niac_specification = [scrape_response[2], scrape_response[3]]
+    naic_specification = [scrape_response[2], scrape_response[3]]
 
-    return jsonify({'description': description, 'keywords': keywords, 'products': products, 'services': services, "SIC Specifications": sic_specification, "NIAC Specifications": niac_specification, 'status':'Success'}), 200
+    return jsonify({'description': description, 'keywords': keywords, 'products': products, 'services': services, "SIC Specifications": sic_specification, "NAIC Specifications": naic_specification, 'status':'Success'}), 200
