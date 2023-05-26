@@ -1,5 +1,5 @@
 # Company Scrapper
-Project developed by [Okechukwu Chukwude](https://github.com/OkeyChukwude) and [Habeeb Agbaje](https://github.com/Hab-eeb) for  the Global Data Competition by [Innoscripta](https://www.innoscripta.com/en). The project uses the [SERP API](https://serpapi.com/), [OPENAPI](https://platform.openai.com/overview) and [SERPER API](https://serper.dev/dashboard). 
+Project developed by [Okechukwu Chukwude](https://github.com/OkeyChukwude) and [Habeeb Agbaje](https://github.com/Hab-eeb) for  the Global Data Competition by [Innoscripta](https://www.innoscripta.com/en). The project uses the [SERP API](https://serpapi.com/), [OPENAPI](https://platform.openai.com/overview), [SERPER API](https://serper.dev/dashboard) and [LangChain](https://python.langchain.com/en/latest/index.html). 
 
 
 ## Prerequisites
