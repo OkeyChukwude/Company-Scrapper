@@ -29,6 +29,11 @@ cd Company-Scrapper
 python3 -m venv venv
 source venv/bin/activate
 ```
+On Windows Machine try
+```shell
+python3 -m venv venv
+source venv/scripts/activate
+```
 
 4. Install the dependencies:
 ```shell
