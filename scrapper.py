@@ -24,7 +24,7 @@ from langchain.docstore.document import Document
 from langchain.chains.question_answering import load_qa_chain
 
 # gpt3 = OpenAI(model_name='text-davinci-003')
-ollm = OpenAI(temperature=0.7) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
+ollm = OpenAI(temperature=0.5) #OpenAI LLM with a temperature of 0.7 increasing its creativity 
 
 #The search tool used to search the internet
 tool_names = ["serpapi"]
@@ -55,8 +55,9 @@ def scrape(company_name, country, url=None):
         query1 = "only give me a comma seperated list of the products and services offered that are related to the industry, with their complete names"
         chain = load_qa_chain(OpenAI(temperature=0), chain_type="stuff")
         products = chain.run(input_documents=docs1, question=query1)
+        products = products.split(',')
 
-        return (description,products)
+        return (description, products)
         # return products
     except:
         return 'There was an error. Try again!'

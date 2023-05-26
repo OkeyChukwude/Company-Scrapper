@@ -13,7 +13,7 @@ def bad_request(error):
 def index():
     return render_template('index.html')
 
-@app.route('/scrape', methods= ['POST'])
+@app.route('/scrape', methods=['POST'])
 def search():
     company_name = request.json.get('name')
     country = request.json.get('country')
@@ -25,4 +25,7 @@ def search():
 
     scrape_response = scrape(company_name, country)
 
-    return jsonify({'data': scrape_response, 'status':'Succes'})
+    if scrape_response == 'There was an error. Try again!':
+        return jsonify({'message': 'There was an error. Try again!', 'status': 'Error'}), 500
+
+    return jsonify({'products/services': list(map(lambda item: item.lstrip(), scrape_response[1])), 'description': scrape_response[0], 'status':'Succes'}), 200

@@ -13,7 +13,7 @@ document.getElementById('scrape-form').addEventListener('submit', async function
 });
 
 async function scrape(name, country, url=null) {
-  console.log(name, country)
+  console.log(name, country, url)
   const response = await fetch('/scrape', {
       method: 'POST',
       headers: {
@@ -26,13 +26,12 @@ async function scrape(name, country, url=null) {
   return data;
 }
 
-// Calculate Results
+// Get Result
 async function getCompanyInfo(){
-  console.log('Calculating...');
   // UI Vars
   const companyName = document.getElementById('company_name').value;
   const country = document.getElementById('country').value;
-  const companyUrl = document.getElementById('company_url').value;
+  const companyUrl = document.getElementById('url').value;
 
   const resultText = document.getElementById('result_text');
 
@@ -40,11 +39,25 @@ async function getCompanyInfo(){
 
   if (companyUrl === '') {
     companyInfo =  await scrape(companyName, country)
-    resultText.textContent = companyInfo.data
   } else {
-    companyInfo =  await scrape(companyName, country, companyUrl)
-    resultText.textContent = `${companyName.value} is located in ${country.value}. It's URL is ${companyUrl.value}`
+    companyInfo =  await scrape(companyName, country, url=companyUrl)
   }
+
+  if (companyInfo.message) {
+    resultText.textContent = companyInfo.message
+  } else {
+    resultText.innerHTML = companyInfo.description.split('Their products and services include')[0]
+
+    resultText.innerHTML += `\nTheir products and services include:
+    <ul>`
+
+    for (let item of companyInfo['products/services']) {
+      resultText.innerHTML += `<li> ${item}</li>\n`
+    }
+
+    resultText.innerHTML += '</ul>'
+  }
+  
 
   
   // Show results
@@ -53,37 +66,4 @@ async function getCompanyInfo(){
   // Hide loader
   document.getElementById('loading').style.display = 'none';
 
-}
-
-// Show Error
-function showError(error){
-  // Hide results
-  document.getElementById('results').style.display = 'none';
-  
-  // Hide loader
-  document.getElementById('loading').style.display = 'none';
-
-  // Create a div
-  const errorDiv = document.createElement('div');
-
-  // Get elements
-  const card = document.querySelector('.card');
-  const heading = document.querySelector('.heading');
-
-  // Add class
-  errorDiv.className = 'alert alert-danger';
-
-  // Create text node and append to div
-  errorDiv.appendChild(document.createTextNode(error));
-
-  // Insert error above heading
-  card.insertBefore(errorDiv, heading);
-
-  // Clear error after 3 seconds
-  setTimeout(clearError, 3000);
-}
-
-// Clear error
-function clearError(){
-  document.querySelector('.alert').remove();
 }
