@@ -38,7 +38,7 @@ async function getCompanyInfo(){
   let companyInfo
 
   if (companyUrl === '') {
-    companyInfo =  await scrape(companyName, country)
+    companyInfo = await scrape(companyName, country)
   } else {
     companyInfo =  await scrape(companyName, country, url=companyUrl)
   }
@@ -46,19 +46,25 @@ async function getCompanyInfo(){
   if (companyInfo.message) {
     resultText.textContent = companyInfo.message
   } else {
-    resultText.innerHTML = companyInfo.description.split('Their products and services include')[0]
+    resultText.innerHTML = `<p>${companyInfo.description}</p>`
+    resultText.innerHTML += `<p><strong>Keywords</strong>: ${companyInfo.keywords}</p>`
 
-    resultText.innerHTML += `\nTheir products and services include:
-    <ul>`
-
-    for (let item of companyInfo['products/services']) {
-      resultText.innerHTML += `<li> ${item}</li>\n`
+    if (companyInfo.products === 'No products') {
+      resultText.innerHTML += `<p><strong>Products</strong>: ${companyInfo.products}</p>`
+    } else {
+      resultText.innerHTML += `<p><strong>Products</strong>: ${companyInfo.products.join(', ')}</p>`
     }
 
-    resultText.innerHTML += '</ul>'
-  }
-  
+    if (companyInfo.servicess === 'No services') {
+      resultText.innerHTML += `<p><strong>Services</strong>: ${companyInfo.services}</p>`
+    } else {
+      resultText.innerHTML += `<p><strong>Services</strong>: ${companyInfo.services.join(', ')}</p>`
+    }
 
+    resultText.innerHTML += `<p><strong>Company Clasicication</strong>: <ul>
+    <li>SIC: ${companyInfo['SIC Specifications']}</li> <li>NIAC: ${companyInfo['NIAC Specifications']}</li>
+    </ul></p>`
+  }
   
   // Show results
   document.getElementById('results').style.display = 'block';

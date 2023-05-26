@@ -1,7 +1,7 @@
 # Company Scrapper
-Project developed by [Okechukwu Chukwude](https://github.com/OkeyChukwude) amd [Habeeb Agbaje](https://github.com/Hab-eeb) for  the Global Data Competition by [Innoscripta](https://www.innoscripta.com/en). The project uses the [SERP API](https://serpapi.com/) and [OPENAPI](https://platform.openai.com/overview). 
+Project developed by [Okechukwu Chukwude](https://github.com/OkeyChukwude) amd [Habeeb Agbaje](https://github.com/Hab-eeb) for  the Global Data Competition by [Innoscripta](https://www.innoscripta.com/en). The project uses the [SERP API](https://serpapi.com/), [OPENAPI](https://platform.openai.com/overview) and [SERPER API](https://serper.dev/dashboard). 
 
-__NOTE:__ You''ll need to obtain API KEYs for SERPAPI and OPENAPI. If the free version is used, the number of company searches that can be made is quite limited due to the limited number of API calls on the free version of these APIs. 
+__NOTE:__ You''ll need to obtain API KEYs for SERPAPI, OPENAPI and SERPER. If the free version is used, the number of company searches that can be made is quite limited due to the limited number of API calls on the free version of these APIs. 
 
 # Installation
 Create a `.env` file in the root directory of the project, input the followng into it and save.
@@ -9,6 +9,7 @@ Create a `.env` file in the root directory of the project, input the followng in
 OPENAI_API_KEY=<YOUR OPEN API KEY>
 SERPAPI_API_KEY=<YOUR SERP API KEY>
 SECRET_KEY=<YOUR APP SECRET>
+SERPER_API_KEY=<YOUR SERPER API KEY>
 ```
 Create and activate a virtual environment and run the command below.
 ```bash
