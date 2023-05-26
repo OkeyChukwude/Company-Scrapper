@@ -12,6 +12,7 @@ document.getElementById('scrape-form').addEventListener('submit', async function
 
 });
 
+// Send POST Request to search endpoint
 async function scrape(name, country, url=null) {
   console.log(name, country, url)
   const response = await fetch('/scrape', {
@@ -62,7 +63,7 @@ async function getCompanyInfo(){
     }
 
     resultText.innerHTML += `<p><strong>Company Clasicication</strong>: <ul>
-    <li>SIC: ${companyInfo['SIC Specifications']}</li> <li>NIAC: ${companyInfo['NIAC Specifications']}</li>
+    <li>SIC: ${companyInfo['SIC Specifications']}</li> <li>NAIC: ${companyInfo['NAIC Specifications']}</li>
     </ul></p>`
   }
   
